@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مغامرة سالم: الدرع السيبراني المفقود</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Arabic (Cairo & Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Three.js Library for 3D Cyber World -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Canvas Confetti for Victory Effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyberTurquoise: '#00F5D4',
+                        cyberBlue: '#00BBF9',
+                        cyberPurple: '#7B2CBF',
+                        cyberPink: '#F15BB5',
+                        cyberGold: '#FEE440',
+                        cyberDark: '#0B091A',
+                        cyberCard: '#15102A'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0B091A;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        .neon-glow-turquoise {
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.5), inset 0 0 10px rgba(0, 245, 212, 0.3);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 15px rgba(241, 91, 181, 0.5), inset 0 0 10px rgba(241, 91, 181, 0.3);
+        }
+        .neon-glow-gold {
+            box-shadow: 0 0 20px rgba(254, 228, 64, 0.7);
+        }
+        .neon-text-turquoise {
+            text-shadow: 0 0 10px rgba(0, 245, 212, 0.8);
+        }
+        .neon-text-gold {
+            text-shadow: 0 0 10px rgba(254, 228, 64, 0.8);
+        }
+        .cyber-border {
+            border: 2px solid #00F5D4;
+            background: rgba(21, 16, 42, 0.85);
+            backdrop-filter: blur(10px);
+        }
+        .cyber-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.2);
+        }
+        .cyber-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B091A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7B2CBF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F5D4;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-cyberDark text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Top Navigation / Status Header -->
+    <header class="w-full bg-cyberCard/90 border-b border-cyberTurquoise/30 backdrop-blur-md sticky top-0 z-40 px-4 py-2 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-300 via-cyberGold to-amber-500 flex items-center justify-center font-black text-cyberDark text-xl shadow-lg border-2 border-amber-200 neon-glow-gold">
+                <i class="fas fa-shield-halved text-cyberDark text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyberTurquoise via-cyberBlue to-cyberPink">
+                    مغامرة سالم: الدرع السيبراني المفقود
+                </h1>
+                <p class="text-xs text-slate-300 font-semibold hidden md:block">الصف السادس الابتدائي - درع الحماية السيبرانية</p>
+            </div>
+        </div>
+
+        <!-- Mode & Status Badges -->
+        <div class="flex items-center gap-2 md:gap-4">
+            <!-- Audio Toggle -->
+            <button id="btn-sound-toggle" onclick="toggleSound()" class="w-10 h-10 rounded-xl bg-slate-800 border border-cyberTurquoise/40 hover:bg-slate-700 flex items-center justify-center text-cyberTurquoise text-lg transition">
+                <i id="sound-icon" class="fas fa-volume-high"></i>
+            </button>
+            
+            <!-- Instructions Button -->
+            <button onclick="showInstructionsModal()" class="w-10 h-10 rounded-xl bg-slate-800 border border-cyberTurquoise/40 hover:bg-slate-700 flex items-center justify-center text-cyberGold text-lg transition" title="طريقة اللعب">
+                <i class="fas fa-circle-info"></i>
+            </button>
+
+            <!-- Score Display -->
+            <div class="bg-slate-900/90 border border-cyberGold/50 px-3 py-1.5 rounded-xl flex items-center gap-2">
+                <i class="fas fa-trophy text-cyberGold text-base animate-bounce"></i>
+                <span class="text-xs text-slate-300 font-bold hidden sm:inline">النقاط:</span>
+                <span id="global-score-display" class="text-lg font-black text-cyberGold">0</span>
+            </div>
+
+            <!-- Team / Mode Badge -->
+            <div id="active-team-badge" class="hidden bg-cyberPurple/80 border border-cyberPink px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5">
+                <i class="fas fa-user-group text-cyberTurquoise"></i>
+                <span id="active-team-name">فريق 1</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="relative flex-1 w-full max-w-7xl mx-auto p-2 sm:p-4 flex flex-col justify-center items-center">
+
+        <!-- SCREEN 1: INTRO & MODE SELECTION -->
+        <section id="screen-intro" class="w-full max-w-4xl bg-cyberCard border-2 border-cyberBlue/40 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden my-auto">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-cyberBlue/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyberPink/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-cyberBlue/20 border border-cyberBlue text-cyberTurquoise font-bold text-xs sm:text-sm mb-4 animate-pulse">
+                    <i class="fas fa-gamepad mr-1"></i> لعبة تعليمية تفاعلية ثلاثية الأبعاد
+                </div>
+
+                <div class="flex justify-center mb-4">
+                    <div class="relative w-28 h-28 sm:w-36 sm:h-36 bg-gradient-to-b from-amber-400/30 to-cyberGold/50 rounded-full border-4 border-cyberGold p-2 flex items-center justify-center neon-glow-gold animate-float text-cyberGold">
+                        <i class="fas fa-user-shield text-5xl sm:text-6xl"></i>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl sm:text-4xl font-black mb-3 text-white">
+                    مرحباً بكِ يا حارسة الأمن السيبراني!
+                </h2>
+                
+                <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-6 font-medium bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50">
+                    «مرحبًا أيتها البطلات! لقد فقد درعي السيبراني 7 قطع مهمة لحماية البيانات والأجهزة، ولن أستطيع استعادتها بدون مساعدتكن! هل أنتن مستعدات لخوض التحدي وجمع القطع السبع؟»
+                </p>
+
+                <!-- Select Game Mode -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-6">
+                    <button onclick="setupMode('single')" class="cyber-btn bg-gradient-to-r from-cyberTurquoise to-cyberBlue text-cyberDark font-black py-4 px-6 rounded-2xl shadow-lg border-2 border-white flex items-center justify-center gap-3 text-lg">
+                        <i class="fas fa-user-astronaut text-xl"></i>
+                        وضع اللعب الفردي
+                    </button>
+                    <button onclick="setupMode('teams')" class="cyber-btn bg-gradient-to-r from-cyberPurple to-cyberPink text-white font-black py-4 px-6 rounded-2xl shadow-lg border-2 border-white flex items-center justify-center gap-3 text-lg">
+                        <i class="fas fa-people-group text-xl"></i>
+                        وضع الفرق المدرسية (5)
+                    </button>
+                </div>
+
+                <div class="flex justify-center gap-4">
+                    <button onclick="showInstructionsModal()" class="text-slate-400 hover:text-cyberTurquoise text-sm font-bold flex items-center gap-2 underline underline-offset-4">
+                        <i class="fas fa-book-bookmark"></i> طريقة اللعب ورسالة سالم
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: TEAM SETUP (When Teams Mode selected) -->
+        <section id="screen-teams-setup" class="hidden w-full max-w-3xl bg-cyberCard border-2 border-cyberPurple/50 rounded-3xl p-6 md:p-8 shadow-2xl">
+            <h2 class="text-2xl font-black text-center text-cyberPink mb-2">
+                <i class="fas fa-users-gear ml-2"></i>إعداد فرق التحدي الصفية (5 فرق)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 text-center mb-6">أدخلي أسماء الفرق الخمسة لبدء الجولة التنافسية بين المجموعات</p>
+
+            <div id="teams-inputs-container" class="space-y-3 mb-6">
+                <!-- Inputs generated dynamically -->
+            </div>
+
+            <div class="flex justify-between gap-4">
+                <button onclick="switchScreen('screen-intro')" class="px-6 py-3 bg-slate-800 text-slate-300 font-bold rounded-xl hover:bg-slate-700">
+                    <i class="fas fa-arrow-right ml-1"></i> الرجوع
+                </button>
+                <button onclick="startTeamsGame()" class="px-8 py-3 bg-gradient-to-r from-cyberTurquoise to-cyberBlue text-cyberDark font-black rounded-xl border border-white hover:brightness-110">
+                    تأكيد وبدء التنافس <i class="fas fa-rocket mr-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: MAP / HUB VIEW -->
+        <section id="screen-map" class="hidden w-full flex-col items-center">
+            <!-- Progress Bar Header -->
+            <div class="w-full bg-cyberCard border border-cyberTurquoise/30 p-4 rounded-2xl mb-4 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-map-location-dot text-cyberTurquoise text-lg"></i>
+                        <span class="text-sm font-black text-cyberTurquoise">خريطة بوابات الدرع السيبراني:</span>
+                        <span id="completed-stages-count" class="text-xs bg-slate-800 px-2.5 py-1 rounded-full text-cyberGold font-extrabold">0 / 7 أكملت</span>
+                    </div>
+                    <!-- Shield Visual Representation -->
+                    <div class="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                        <i class="fas fa-shield text-cyberGold text-xs"></i>
+                        <span class="text-xs text-slate-300 font-bold ml-1">قطع الدرع:</span>
+                        <div id="shield-segments-mini" class="flex items-center gap-1">
+                            <!-- 7 Shield Pieces Indicators -->
+                            <span data-piece="1" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">1</span>
+                            <span data-piece="2" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">2</span>
+                            <span data-piece="3" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">3</span>
+                            <span data-piece="4" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">4</span>
+                            <span data-piece="5" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">5</span>
+                            <span data-piece="6" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">6</span>
+                            <span data-piece="7" class="w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold">7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teams Score Switcher Bar (If Team Mode) -->
+                <div id="teams-scoreboard-bar" class="hidden grid grid-cols-5 gap-1.5 pt-2 border-t border-slate-800">
+                    <!-- Teams small status tags -->
+                </div>
+            </div>
+
+            <!-- Stages Grid / Gateway Buttons -->
+            <div id="stages-grid" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <!-- 7 Stages cards dynamically created -->
+            </div>
+        </section>
+
+        <!-- SCREEN 4: GAME STAGE ARENA (3D World + Interactive Challenge) -->
+        <section id="screen-arena" class="hidden w-full flex-col gap-4">
+            
+            <!-- Stage Header Banner -->
+            <div class="w-full bg-cyberCard border-2 border-cyberBlue/50 p-3 sm:p-4 rounded-2xl flex justify-between items-center shadow-xl">
+                <div class="flex items-center gap-3">
+                    <button onclick="returnToMap()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 border border-slate-600">
+                        <i class="fas fa-arrow-right"></i> الخريطة
+                    </button>
+                    <div>
+                        <span id="arena-stage-number" class="text-xs font-black text-cyberTurquoise block">المرحلة 1 من 7</span>
+                        <h3 id="arena-stage-title" class="text-base sm:text-xl font-extrabold text-white">قلعة كلمات المرور</h3>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div class="bg-slate-900 border border-cyberGold/40 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold text-cyberGold flex items-center gap-1.5">
+                        <i class="fas fa-list-check text-cyberGold"></i>
+                        <span>التحدي: <span id="challenge-step-counter">1 / 3</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Canvas Container & Player Controls Layer -->
+            <div class="relative w-full h-[260px] sm:h-[340px] rounded-3xl overflow-hidden border-2 border-cyberTurquoise/40 shadow-2xl bg-slate-950">
+                <!-- ThreeJS Canvas -->
+                <canvas id="three-canvas" class="w-full h-full block"></canvas>
+
+                <!-- Overlay Instructions for 3D Character -->
+                <div class="absolute top-3 right-3 bg-cyberDark/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-cyberTurquoise/40 text-[11px] sm:text-xs text-cyberTurquoise font-bold flex items-center gap-2">
+                    <i class="fas fa-gamepad"></i>
+                    <span>حركي سالم لجمع قطع البيانات بالأرضية!</span>
+                </div>
+
+                <!-- On-Screen Touch Controls for iPad/Mobile -->
+                <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end pointer-events-none">
+                    <!-- D-Pad Directional Buttons -->
+                    <div class="flex flex-col items-center gap-1 pointer-events-auto bg-slate-900/70 p-2 rounded-2xl backdrop-blur-sm border border-slate-700">
+                        <button onpointerdown="startMove('Up')" onpointerup="stopMove()" onpointerleave="stopMove()" class="w-10 h-10 bg-slate-800/90 active:bg-cyberTurquoise active:text-cyberDark text-white rounded-lg flex items-center justify-center font-bold text-lg border border-slate-600 shadow">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                        <div class="flex gap-1">
+                            <button onpointerdown="startMove('Left')" onpointerup="stopMove()" onpointerleave="stopMove()" class="w-10 h-10 bg-slate-800/90 active:bg-cyberTurquoise active:text-cyberDark text-white rounded-lg flex items-center justify-center font-bold text-lg border border-slate-600 shadow">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button onpointerdown="startMove('Down')" onpointerup="stopMove()" onpointerleave="stopMove()" class="w-10 h-10 bg-slate-800/90 active:bg-cyberTurquoise active:text-cyberDark text-white rounded-lg flex items-center justify-center font-bold text-lg border border-slate-600 shadow">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button onpointerdown="startMove('Right')" onpointerup="stopMove()" onpointerleave="stopMove()" class="w-10 h-10 bg-slate-800/90 active:bg-cyberTurquoise active:text-cyberDark text-white rounded-lg flex items-center justify-center font-bold text-lg border border-slate-600 shadow">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Jump Button -->
+                    <div class="pointer-events-auto">
+                        <button onpointerdown="triggerJump()" class="w-14 h-14 bg-gradient-to-tr from-cyberPurple to-cyberPink active:scale-95 text-white rounded-2xl flex items-center justify-center font-black text-xl border-2 border-white shadow-xl">
+                            <i class="fas fa-angles-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenge Panel (Interactive Task Area below 3D World) -->
+            <div id="challenge-panel" class="w-full bg-cyberCard border-2 border-cyberPurple/50 rounded-2xl p-4 sm:p-6 shadow-xl relative min-h-[220px]">
+                <!-- Challenge Title & Prompt -->
+                <div class="mb-4">
+                    <span id="challenge-type-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-cyberPurple/40 text-cyberPink border border-cyberPink/40 mb-2">
+                        <i class="fas fa-circle-question ml-1"></i>سؤال تفاعلي
+                    </span>
+                    <h4 id="challenge-question" class="text-base sm:text-lg font-black text-white leading-snug">
+                        جاري تحميل التحدي...
+                    </h4>
+                </div>
+
+                <!-- Dynamic Options / Interaction Area -->
+                <div id="challenge-interactive-area" class="w-full min-h-[100px] mb-4">
+                    <!-- Dynamic choices, sorting items, or clickable platforms -->
+                </div>
+
+                <!-- Feedback Message Overlay Box -->
+                <div id="feedback-box" class="hidden p-4 rounded-xl border text-sm font-bold animate-fade-in flex items-center gap-3">
+                    <span id="feedback-icon" class="text-2xl"></span>
+                    <p id="feedback-text" class="text-slate-100 flex-1"></p>
+                    <button id="btn-next-challenge" onclick="nextChallenge()" class="hidden px-5 py-2 bg-cyberTurquoise text-cyberDark font-black rounded-lg text-xs hover:brightness-110 flex items-center gap-1">
+                        التالي <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: FINAL VICTORY & CERTIFICATE -->
+        <section id="screen-victory" class="hidden w-full max-w-4xl bg-cyberCard border-2 border-cyberGold/70 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative">
+            <div class="absolute inset-0 bg-gradient-to-b from-cyberGold/10 via-transparent to-cyberPurple/20 pointer-events-none rounded-3xl"></div>
+
+            <div class="relative z-10">
+                <div class="text-6xl sm:text-7xl mb-2 animate-bounce text-cyberGold">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyberGold via-white to-cyberTurquoise mb-2">
+                    رائع يا بطلات! اكتمل درع الحماية السيبرانية!
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-6">
+                    «لقد استعدتن قطع الدرع السبع بنجاح وأصبحتن الآن حارسات الأمن السيبراني الخبيرات!»
+                </p>
+
+                <!-- Final Score Summary Box -->
+                <div id="final-summary-box" class="bg-slate-900/90 border border-cyberGold/40 rounded-2xl p-4 sm:p-6 mb-6 max-w-md mx-auto shadow-inner">
+                    <!-- Dynamic Summary populated JS -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 mb-6">
+                    <button onclick="printCertificate()" class="cyber-btn bg-gradient-to-r from-cyberGold to-amber-500 text-cyberDark font-black py-3 px-6 rounded-xl border border-white flex items-center gap-2 shadow-lg">
+                        <i class="fas fa-file-pdf text-lg"></i> طباعة شهادة بطلة الحماية
+                    </button>
+                    <button onclick="resetGame()" class="cyber-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-xl border border-slate-600 flex items-center gap-2">
+                        <i class="fas fa-rotate-right text-lg"></i> إعادة المغامرة من جديد
+                    </button>
+                </div>
+
+                <!-- Printable Certificate Template Hidden / Display Container -->
+                <div id="certificate-wrapper" class="hidden p-8 bg-white text-slate-900 rounded-3xl border-8 border-yellow-500 text-right shadow-2xl relative my-8">
+                    <div class="border-4 border-dashed border-yellow-600 p-6 rounded-2xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <i class="fas fa-shield-halved text-4xl text-amber-600"></i>
+                            <div class="text-center">
+                                <h1 class="text-2xl font-black text-yellow-700">شهادة بطلة الحماية السيبرانية</h1>
+                                <p class="text-xs font-bold text-slate-600">برنامج درع الحماية السيبرانية - الصف السادس الابتدائي</p>
+                            </div>
+                            <i class="fas fa-flag text-4xl text-emerald-600"></i>
+                        </div>
+                        <p class="text-center text-sm font-bold text-slate-700 mb-4">يشهد برنامج مغامرة سالم للسلامة السيبرانية بأن البطلة / الفريق:</p>
+                        <h2 id="cert-player-name" class="text-center text-2xl font-black text-purple-900 border-b-2 border-yellow-500 pb-2 mb-4">
+                            حارسة الأمن السيبراني
+                        </h2>
+                        <p class="text-center text-xs leading-relaxed font-semibold text-slate-700 mb-6">
+                            قد أتمت بنجاح جمع قطع الدرع السبع واجتياز جميع التحديات التوعوية بنجاح، وأصبحت مؤهلة لحماية بياناتها وحساباتها وأجهزتها الذكية بحكمة وأمان.
+                        </p>
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-600 border-t pt-4">
+                            <div>التاريخ: <span id="cert-date">2026/10/18</span></div>
+                            <div>الدرجة الكاملة: <span id="cert-score">70</span> نقطة</div>
+                            <div>توقيع سالم: <i class="fas fa-pen-nib ml-1"></i> سالم السيبراني</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Game Instructions & Educational Salem Message -->
+    <div id="modal-instructions" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-cyberCard border-2 border-cyberTurquoise rounded-3xl max-w-xl w-full p-6 text-white shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="hideInstructionsModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center font-bold">
+                <i class="fas fa-xmark"></i>
+            </button>
+            
+            <div class="flex items-center gap-3 mb-4 border-b border-slate-700 pb-3">
+                <i class="fas fa-book-open text-3xl text-cyberTurquoise"></i>
+                <div>
+                    <h3 class="text-xl font-black text-cyberTurquoise">دليل مغامرة سالم والتعليمات</h3>
+                    <p class="text-xs text-slate-300">درع الحماية السيبرانية - الصف السادس الابتدائي</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm leading-relaxed text-slate-200">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-cyberBlue/30">
+                    <h4 class="font-extrabold text-cyberGold mb-1 flex items-center gap-1.5">
+                        <i class="fas fa-gamepad"></i> طريقة اللعب والتحكم:
+                    </h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300">
+                        <li>استخدمي أسهم لوحة المفاتيح أو أزرار اللمس الشفافة لتحريك «سالم» في العالم 3D.</li>
+                        <li>اصطدمي بالمنصات المضيئة وجمعي عناصر البيانات لتأكيد الإجابات.</li>
+                        <li>كل إجابة صحيحة تمنحكِ 10 نقاط وتفتح قطعة جديدة من الدرع.</li>
+                        <li>عند اختيار إجابة خاطئة ستحصلين على تغذية راجعة توجيهية وإعادة المحاولة.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-cyberPurple/30">
+                    <h4 class="font-extrabold text-cyberPink mb-1 flex items-center gap-1.5">
+                        <i class="fas fa-shield-halved"></i> بوابات الدرع السبع:
+                    </h4>
+                    <p>1. قلعة كلمات المرور | 2. بوابة الرمز السري OTP | 3. حصن التحقق الثنائي | 4. مدينة أمن الأجهزة | 5. محطة التحديثات | 6. متجر التطبيقات الذكي | 7. بوابة التوقف والسؤال.</p>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-cyberTurquoise/30 text-center">
+                    <p class="font-bold text-cyberTurquoise">«تذكري دائماً قاعدة سالم: توقف، تحقق، وفكر قبل كل تصرف سيبراني!»</p>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <button onclick="hideInstructionsModal()" class="px-8 py-2.5 bg-cyberTurquoise text-cyberDark font-black rounded-xl hover:brightness-110 flex items-center gap-2 mx-auto">
+                    <span>مفهوم، فلنبدأ!</span>
+                    <i class="fas fa-rocket"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full bg-cyberDark/90 border-t border-slate-800 py-3 text-center text-xs text-slate-400 font-bold">
+        مستوحى من كتاب «درع الحماية السيبرانية» - الصف السادس الابتدائي 🇸🇦
+    </footer>
+
+    <script>
+        /* ---------------------------------------------------------------------
+           1. SOUND GENERATOR (Web Audio API Synthesizer)
+        --------------------------------------------------------------------- */
+        let audioCtx = null;
+        let isSoundMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isSoundMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.25); // A2
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'jump') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'win') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.15);
+                    osc.frequency.setValueAtTime(659.25, now + 0.30);
+                    osc.frequency.setValueAtTime(880, now + 0.45);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    osc.start(now);
+                    osc.stop(now + 0.8);
+                }
+            } catch (e) {
+                console.warn('Audio play error', e);
+            }
+        }
+
+        function toggleSound() {
+            isSoundMuted = !isSoundMuted;
+            const soundIcon = document.getElementById('sound-icon');
+            if (isSoundMuted) {
+                soundIcon.className = 'fas fa-volume-xmark text-slate-500';
+            } else {
+                soundIcon.className = 'fas fa-volume-high text-cyberTurquoise';
+                playSound('success');
+            }
+        }
+
+        /* ---------------------------------------------------------------------
+           2. CURRICULUM STAGES & CHALLENGES DATA
+        --------------------------------------------------------------------- */
+        const STAGES_DATA = [
+            {
+                id: 1,
+                title: 'قلعة كلمات المرور',
+                icon: 'fa-key',
+                color: 'from-blue-600 to-cyan-500',
+                pieceName: 'قطعة كلمة المرور القوية',
+                challenges: [
+                    {
+                        question: 'أي من كلمات المرور التالية تعتبر الأقوى والأجدر بحماية حساب سالم؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'Salem123', correct: false, explain: 'كلمة ضغيفة تحتوي على الاسم وتتابع أرقام بصلة مباشرة بمالك الحساب.' },
+                            { text: 'S123456', correct: false, explain: 'سهلة التخمين بسبب تتابع الأرقام البسيط.' },
+                            { text: 'S#lm2026!P@ss', correct: true, explain: 'احسنتِ! تحتوي على رموز وأرقام وحروف كبيرة وصغيرة وأكثر من 8 خانات.' }
+                        ]
+                    },
+                    {
+                        question: 'طلبت صديقة سالم كلمة المرور الخاصة بحسابه لتلعب بالنيابة عنه، ما التصرف الصحيح؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'إعطاؤها كلمة المرور لأنها صديقة مقربة', correct: false, explain: 'لا تشاركي كلمة المرور مع أي شخص أبداً مهما كانت درجة القرب.' },
+                            { text: 'الرفض بلطف والاحتفاظ بكلمة المرور سرية', correct: true, explain: 'ممتازة! كلمة المرور سر شخصي خاص بكِ فقط ولا تشارك إلا مع الوالدين.' },
+                            { text: 'كتابتها في ورقة وإعطاؤها إياها', correct: false, explain: 'كتابة كلمة المرور يعرضها للسرقة والاختراق.' }
+                        ]
+                    },
+                    {
+                        question: 'هل يفضل استخدام نفس كلمة المرور لجميع حساباتكِ في المدرسة والألعاب والبريد؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'نعم، لتسهيل تذكرها بسرعة', correct: false, explain: 'تكرار كلمة المرور يعرض جميع حساباتك للخطر إذا اخترق حساب واحد.' },
+                            { text: 'لا، يجب إنشاء كلمة مرور مختلفة وآمنة لكل حساب', correct: true, explain: 'إجابة صحيحة! التنوع يحمي باقي الحسابات في حال اختراق أحدهما.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: 'بوابة الرمز السري OTP',
+                icon: 'fa-mobile-retro',
+                color: 'from-emerald-500 to-teal-700',
+                pieceName: 'قطعة الرمز المؤقت السري',
+                challenges: [
+                    {
+                        question: 'وصلت سالم رسالة نصية تحتوي رمز تحقق (OTP) دون أن يطلب تسجيل الدخول، ماذا يفعل؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'إرسال الرمز لأي شخص يطلبه في الهاتف', correct: false, explain: 'رمز OTP خاص جداً ولا يعطى لأي متصل.' },
+                            { text: 'تجاهل الرسالة وعدم مشاركتها وإبلاغ الوالدين', correct: true, explain: 'رائع! محاولة دخول غير مصرح بها ويجب الاحتفاظ بالرمز سراً.' },
+                            { text: 'نشر الرمز في مجموعات التواصل لمعرفة مصدره', correct: false, explain: 'نشر الرمز يتيح للمخترق التسلل إلى حسابك.' }
+                        ]
+                    },
+                    {
+                        question: 'اتصل شخص ادعى أنه من الدعم الفني وطلب رمز التحقق لتحديث الحساب، التصرف السليم هو:',
+                        type: 'choice',
+                        options: [
+                            { text: 'إنهاء المكالمة فوراً وعدم إعطاء الرمز', correct: true, explain: 'أحسنتِ! الجهات الرسمية لا تطلب رمز التحقق OTP أبداً عبر الهاتف.' },
+                            { text: 'قراءة الرمز له لمساعدته في التحديث', correct: false, explain: 'هذا احتيال سيبراني لسارقة الحساب.' }
+                        ]
+                    },
+                    {
+                        question: 'ما فائدة رمز التحقق المؤقت (OTP) الذي يصل لجوالكِ؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'هو رمز حماية إضافي مؤقت يتغير باستمرار للتأكد من هويتك', correct: true, explain: 'صحيح! يمثل خط دفاع ثانٍ يمنع الدخول غير المصرح به.' },
+                            { text: 'تطبيق ألعاب مجاني يرسل هدايا', correct: false, explain: 'غير صحيح، هو رمز أمني سيبراني حساس.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: 'حصن التحقق الثنائي 2FA',
+                icon: 'fa-shield-cat',
+                color: 'from-purple-600 to-indigo-700',
+                pieceName: 'قطعة درع الموثوقية المزدوجة',
+                challenges: [
+                    {
+                        question: 'أي الحسابات التالية يُعد الأكثر أماناً وحماية من الاختراق؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'حساب يعتمد على كلمة مرور بسيطة فقط', correct: false, explain: 'سهل الاختراق والتخمين.' },
+                            { text: 'حساب مفعّل به خاصية التحقق الثنائي (2FA)', correct: true, explain: 'ممتازة! التحقق الثنائي يتطلب كلمة المرور ورمز إضافي مما يضاعف الأمان.' }
+                        ]
+                    },
+                    {
+                        question: 'رربي خطوات تسجيل الدخول الآمن بحسب خاصية التحقق الثنائي:',
+                        type: 'choice',
+                        options: [
+                            { text: 'أولاً: إدخال كلمة المرور ⬅️ ثانياً: إدخال رمز التحقق الواصل للجوال', correct: true, explain: 'ترتيب صحيح 100%! هذه هي آلية 2FA.' },
+                            { text: 'أولاً: إرسال كلمة المرور للصديق ⬅️ ثانياً: إغلاق الهاتف', correct: false, explain: 'خطوات غير آمنة.' }
+                        ]
+                    },
+                    {
+                        question: 'إذا عرف المخترق كلمة مرور حسابك المفعّل به التحقق الثنائي، هل يستطيع الدخول مباشرة؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'نعم يستطيع فوراً', correct: false, explain: 'التحقق الثنائي يمنعه لأنه لا يملك جوالك لاستلام الرمز.' },
+                            { text: 'لا، سيوقفه النظام ويطلب الرمز الإضافي المرسل لجوالك', correct: true, explain: 'أحسنتِ! هذه قوة درع التحقق الثنائي.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: 'مدينة أمن الأجهزة',
+                icon: 'fa-laptop-code',
+                color: 'from-pink-600 to-rose-500',
+                pieceName: 'قطعة قفل الأجهزة الذكية',
+                challenges: [
+                    {
+                        question: 'أراد سالم الابتعداد عن حاسوبه في معامل المدرسة لأداء الصلاة، ما الإجراء الآمن؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'ترك الجهاز مفتوحاً للعودة بسرعة', correct: false, explain: 'قد يستغل أي شخص غيابك للعبث ببياناتك.' },
+                            { text: 'قفل الشاشة برمز السبر (Lock) قبل مغادرة المكان', correct: true, explain: 'تصرف بطلة! قفل الجهاز يحمي بياناتك عند الابتعاد عنه.' }
+                        ]
+                    },
+                    {
+                        question: 'ظهرت نافذة منبثقة غريبة أثناء التصفح تقول "جهازك مصاب بفايروس اضغط هنا"، التصرف السليم:',
+                        type: 'choice',
+                        options: [
+                            { text: 'إغلاق النافذة فوراً وعدم النقر على الرابط', correct: true, explain: 'رائع! هذه إعلانات خبيثة تهدف لخدعك.' },
+                            { text: 'الضغط على الرابط لتنظيف الجهاز', correct: false, explain: 'الضغط قد يحمّل برمجيات ضارة واقعية.' }
+                        ]
+                    },
+                    {
+                        question: 'ما هي الوسيلة الأفضل لحماية جهاز الآيباد الخاص بكِ من المتطفلين عند ضياعه؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'تعيين رمز قفل للشاشة (Passcode) أو بصمة الوجه', correct: true, explain: 'إجابة صحيحة ومهمة جداً لجميع الأجهزة الذكية.' },
+                            { text: 'عدم وضع أي رمز حتى لا تنسيه', correct: false, explain: 'بدون رمز يستطيع أي شخص فتح الجهاز وقراءة خصوصيتك.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: 'محطة التحديثات',
+                icon: 'fa-arrows-rotate',
+                color: 'from-amber-500 to-yellow-600',
+                pieceName: 'قطعة التحديث الأمني',
+                challenges: [
+                    {
+                        question: 'لماذا ترسل شركات الهواتف والتطبيقات تحديثات أمنية مستمرة (Updates)؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'لإغلاق الثغرات الأمنية وتحسين أمان وسرعة الجهاز', correct: true, explain: 'أحسنتِ! التحديثات هي الدرع الذي يغلق الثغرات أمام المخترقين.' },
+                            { text: 'لتعبئة ذاكرة الجهاز وإبطائه فقط', correct: false, explain: 'مفهوم خاطئ، التحديثات ضرورية جداً لحمايتك.' }
+                        ]
+                    },
+                    {
+                        question: 'ظهر إشعار نظام ينبه بوجود تحديث أمني جديد لنظام تشغيل الآيباد، ماذا تفعلين؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'تأجيل التحديث للأبد وتجاهله', correct: false, explain: 'التأجيل المستمر يبقي جهازك معرضاً للثغرات.' },
+                            { text: 'الموافقة على تثبيت التحديث وتوصيل الجهاز بالشاحن', correct: true, explain: 'تصرف ذكي وآمن تماماً!' }
+                        ]
+                    },
+                    {
+                        question: 'من أي مصدر ينبغي تحميل التحديثات والبرامج بشكل آمن؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'من إعدادات الجهاز الأصلية والمتاجر الرسمية فقط', correct: true, explain: 'صحيح! التحميل من المصادر الرسمية يضمن خلو التحديث من الفايروسات.' },
+                            { text: 'من روابط غير معروفة في المنتديات', correct: false, explain: 'الروابط الخارجية قد تحتوي برامج ضارة.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: 'متجر التطبيقات الذكي',
+                icon: 'fa-store',
+                color: 'from-cyan-600 to-blue-700',
+                pieceName: 'قطعة موثوقية التطبيقات',
+                challenges: [
+                    {
+                        question: 'أرادت صديقة سالم تحميل لعبة جديدة على جهازها، ما هي الخطوة الأولى الصحيحة؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'التأكد من التقييم والعمر المناسب وطلب موافقة ولي الأمر', correct: true, explain: 'بطلة! الاستئذان والتأكد من ملاءمة العمر خطوة أساسية.' },
+                            { text: 'تحميل اللعبة مباشرة من أي موقع مجاني', correct: false, explain: 'قد يحتوي الموقع على تطبيقات مزيفة ضارة.' }
+                        ]
+                    },
+                    {
+                        question: 'طلب تطبيق رسم بسيط صلاحية الوصول لـ (قائمة الاتصالات والرسائل النصية)، ما التصرف؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'رفض الصلاحية فوراً لأنها غير منطقية لتطبيق رسم', correct: true, explain: 'ممتازة! مراجعة الصلاحيات تحمي بياناتك من التجسس.' },
+                            { text: 'الموافقة على جميع الصلاحيات دون قراءة', correct: false, explain: 'منح صلاحيات غير مطلوبة يهدد خصوصيتك.' }
+                        ]
+                    },
+                    {
+                        question: 'ما هو المتجر المعتمد والآمن لتحميل التطبيقات في أجهزة آبل وأندرويد؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'متجر App Store / Google Play الرسمي', correct: true, explain: 'إجابة صحيحة! المتاجر الرسمية تفحص التطبيقات قبل نشرها.' },
+                            { text: 'روابط عشوائية مرسلة عبر الواتساب', correct: false, explain: 'الروابط المجهولة خطيرة جداً.' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                title: 'بوابة التوقف والسؤال',
+                icon: 'fa-hand',
+                color: 'from-red-600 to-purple-800',
+                pieceName: 'قطعة الحكمة والاستشارة',
+                challenges: [
+                    {
+                        question: 'وصلت سالم رسالة: "مبروك! فزت برحلة مجانية انقر هنا لتعبئة رقم هاتف والدك"، القاعدة الذهبية هي:',
+                        type: 'choice',
+                        options: [
+                            { text: 'توقف، تحقق وفكر، ثم اسأل شخصاً بالغاً موثوقاً (الوالدين أو المعلمة)', correct: true, explain: 'أحسنتِ! هذه هي قاعدة الدرع السيبراني الذهبية.' },
+                            { text: 'النقر بسرعة وتعبئة البيانات قبل انتهاء الوقت', correct: false, explain: 'هذه خدعة شائعة لجمع بيانات الوالدين.' }
+                        ]
+                    },
+                    {
+                        question: 'إذا تعرضتِ لموقف محرج أو رسالة غريبة أو ابتزاز في العالم الافتراضي، من هو الشخص الموثوق؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'الوالدان، المعلمة، أو الجهة الأمنية المختصة (كلنا أمن)', correct: true, explain: 'صحيح 100%! إخبار الوالدين يوفر الحماية الفورية دون خوف.' },
+                            { text: 'الخوف والكتمان وعدم إخبار أحد', correct: false, explain: 'الكتمان يزيد المشكلة، والوالدان هما ملجأكِ الآمن.' }
+                        ]
+                    },
+                    {
+                        question: 'ماذا تعني عبارة «توقف، تحقق، وفكر» عند التصفح السيبراني؟',
+                        type: 'choice',
+                        options: [
+                            { text: 'التأني وعدم التسرع بالنقر على الروابط والتحقق من أمانها', correct: true, explain: 'إجابة صحيحة وبذلك تكملين درع الحماية السيبرانية بنجاح!' },
+                            { text: 'إغلاق الإنترنت للأبد وعدم استخدامه', correct: false, explain: 'الهدف هو الاستخدام الواعي والآمن للتكنولوجيا.' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        /* ---------------------------------------------------------------------
+           3. GLOBAL GAME STATE
+        --------------------------------------------------------------------- */
+        let gameState = {
+            mode: 'single', // 'single' or 'teams'
+            teams: [],
+            currentTeamIndex: 0,
+            activeStageId: 1,
+            activeChallengeIndex: 0,
+            stageProgress: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false },
+            scores: { single: 0 }
+        };
+
+        /* ---------------------------------------------------------------------
+           4. THREE.JS 3D WORLD ENGINE
+        --------------------------------------------------------------------- */
+        let scene, camera, renderer, salemMesh, platformMesh, glowingOrbs = [];
+        let playerPos = { x: 0, y: 0.8, z: 2 };
+        let isJumping = false;
+        let jumpVelocity = 0;
+        let moveState = { Up: false, Down: false, Left: false, Right: false };
+
+        function initThreeJS() {
+            const container = document.getElementById('three-canvas');
+            if (!container) return;
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0b091a);
+            scene.fog = new THREE.FogExp2(0x0b091a, 0.05);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 4, 7);
+            camera.lookAt(0, 1, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0x00f5d4, 0.8);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+
+            const pointLight = new THREE.PointLight(0xf15bb5, 1, 15);
+            pointLight.position.set(-2, 3, 0);
+            scene.add(pointLight);
+
+            // Cyber Grid Ground Platform
+            const gridHelper = new THREE.GridHelper(20, 20, 0x00f5d4, 0x7b2cbf);
+            gridHelper.position.y = 0;
+            scene.add(gridHelper);
+
+            // Main Platform Block (Roblox Style)
+            const platGeo = new THREE.BoxGeometry(10, 0.4, 10);
+            const platMat = new THREE.MeshPhongMaterial({ color: 0x15102a, emissive: 0x0b091a, shininess: 100 });
+            platformMesh = new THREE.Mesh(platGeo, platMat);
+            platformMesh.position.y = -0.2;
+            scene.add(platformMesh);
+
+            // Salem 3D Character (Stylized Roblox-like Avatar)
+            const salemGroup = new THREE.Group();
+
+            // Head
+            const headGeo = new THREE.BoxGeometry(0.7, 0.7, 0.7);
+            const headMat = new THREE.MeshLambertMaterial({ color: 0xffdbac });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.3;
+            salemGroup.add(head);
+
+            // Hair/Cap
+            const capGeo = new THREE.BoxGeometry(0.75, 0.25, 0.75);
+            const capMat = new THREE.MeshLambertMaterial({ color: 0x00bbf9 });
+            const cap = new THREE.Mesh(capGeo, capMat);
+            cap.position.y = 1.65;
+            salemGroup.add(cap);
+
+            // Body (Suit)
+            const bodyGeo = new THREE.BoxGeometry(0.8, 0.9, 0.5);
+            const bodyMat = new THREE.MeshLambertMaterial({ color: 0x7b2cbf });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 0.55;
+            salemGroup.add(body);
+
+            // Shield Symbol on Chest (Pure Radiant Gold)
+            const shieldGeo = new THREE.BoxGeometry(0.35, 0.35, 0.08);
+            const shieldMat = new THREE.MeshPhongMaterial({ 
+                color: 0xFEE440, 
+                emissive: 0xD4AF37, 
+                shininess: 100 
+            });
+            const shieldBadge = new THREE.Mesh(shieldGeo, shieldMat);
+            shieldBadge.position.set(0, 0.6, 0.28);
+            salemGroup.add(shieldBadge);
+
+            salemMesh = salemGroup;
+            salemMesh.position.set(playerPos.x, playerPos.y, playerPos.z);
+            scene.add(salemMesh);
+
+            // Glowing Data Orbs
+            createGlowingOrbs();
+
+            // Window Resize listener
+            window.addEventListener('resize', onWindowResize);
+
+            // Start Animation Loop
+            animate3D();
+        }
+
+        function createGlowingOrbs() {
+            // Remove old
+            glowingOrbs.forEach(o => scene.remove(o));
+            glowingOrbs = [];
+
+            const orbGeo = new THREE.OctahedronGeometry(0.25, 0);
+            const colors = [0x00f5d4, 0xf15bb5, 0xfee440];
+
+            for (let i = 0; i < 4; i++) {
+                const orbMat = new THREE.MeshBasicMaterial({ color: colors[i % colors.length], wireframe: true });
+                const orb = new THREE.Mesh(orbGeo, orbMat);
+                orb.position.set((Math.random() - 0.5) * 6, 0.8, (Math.random() - 0.5) * 6);
+                scene.add(orb);
+                glowingOrbs.push(orb);
+            }
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('three-canvas');
+            if (!container || !renderer || !camera) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            if (!salemMesh) return;
+
+            // Handle Character Movement
+            const speed = 0.08;
+            if (moveState.Up && salemMesh.position.z > -4) salemMesh.position.z -= speed;
+            if (moveState.Down && salemMesh.position.z < 4) salemMesh.position.z += speed;
+            if (moveState.Left && salemMesh.position.x > -4) salemMesh.position.x -= speed;
+            if (moveState.Right && salemMesh.position.x < 4) salemMesh.position.x += speed;
+
+            // Handle Jumping
+            if (isJumping) {
+                salemMesh.position.y += jumpVelocity;
+                jumpVelocity -= 0.015; // Gravity
+                if (salemMesh.position.y <= 0.8) {
+                    salemMesh.position.y = 0.8;
+                    isJumping = false;
+                }
+            }
+
+            // Animate Orbs Rotation & Float
+            glowingOrbs.forEach((orb, idx) => {
+                orb.rotation.y += 0.02;
+                orb.position.y = 0.8 + Math.sin(Date.now() * 0.003 + idx) * 0.15;
+            });
+
+            // Smooth Camera Follow
+            camera.position.x = salemMesh.position.x * 0.3;
+            camera.lookAt(salemMesh.position.x * 0.2, 1, salemMesh.position.z * 0.2);
+
+            renderer.render(scene, camera);
+        }
+
+        function startMove(dir) {
+            moveState[dir] = true;
+        }
+
+        function stopMove() {
+            moveState = { Up: false, Down: false, Left: false, Right: false };
+        }
+
+        function triggerJump() {
+            if (!isJumping) {
+                isJumping = true;
+                jumpVelocity = 0.22;
+                playSound('jump');
+            }
+        }
+
+        // Keyboard Controls
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'w') moveState.Up = true;
+            if (e.key === 'ArrowDown' || e.key === 's') moveState.Down = true;
+            if (e.key === 'ArrowLeft' || e.key === 'a') moveState.Left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') moveState.Right = true;
+            if (e.key === ' ' || e.key === 'Spacebar') triggerJump();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'w') moveState.Up = false;
+            if (e.key === 'ArrowDown' || e.key === 's') moveState.Down = false;
+            if (e.key === 'ArrowLeft' || e.key === 'a') moveState.Left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') moveState.Right = false;
+        });
+
+        /* ---------------------------------------------------------------------
+           5. UI CONTROLLERS & GAME LOGIC
+        --------------------------------------------------------------------- */
+        function switchScreen(screenId) {
+            const screens = ['screen-intro', 'screen-teams-setup', 'screen-map', 'screen-arena', 'screen-victory'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id === screenId) {
+                        el.classList.remove('hidden');
+                        el.classList.add('flex');
+                    } else {
+                        el.classList.add('hidden');
+                        el.classList.remove('flex');
+                    }
+                }
+            });
+
+            if (screenId === 'screen-arena') {
+                setTimeout(onWindowResize, 100);
+            }
+        }
+
+        function setupMode(mode) {
+            initAudio();
+            gameState.mode = mode;
+
+            if (mode === 'single') {
+                document.getElementById('active-team-badge').classList.add('hidden');
+                switchScreen('screen-map');
+                renderMapStages();
+            } else {
+                renderTeamsInputForm();
+                switchScreen('screen-teams-setup');
+            }
+        }
+
+        function renderTeamsInputForm() {
+            const container = document.getElementById('teams-inputs-container');
+            container.innerHTML = '';
+            const defaultNames = ['فريق الأبطال 🛡️', 'فريق الأمان 🔐', 'فريق الحماية ⚡', 'فريق الصمود 🌟', 'فريق الابتكار 🚀'];
+
+            for (let i = 0; i < 5; i++) {
+                container.innerHTML += `
+                    <div class="flex items-center gap-3 bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <span class="w-8 h-8 rounded-full bg-cyberPurple font-black flex items-center justify-center text-xs text-white">${i+1}</span>
+                        <input type="text" id="team-input-${i}" value="${defaultNames[i]}" class="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white font-bold focus:border-cyberTurquoise focus:outline-none" />
+                    </div>
+                `;
+            }
+        }
+
+        function startTeamsGame() {
+            gameState.teams = [];
+            for (let i = 0; i < 5; i++) {
+                const val = document.getElementById(`team-input-${i}`).value.trim() || `فريق ${i+1}`;
+                gameState.teams.push({ id: i, name: val, score: 0 });
+            }
+            gameState.currentTeamIndex = 0;
+            updateTeamBadgeDisplay();
+            switchScreen('screen-map');
+            renderMapStages();
+        }
+
+        function updateTeamBadgeDisplay() {
+            if (gameState.mode === 'teams') {
+                const badge = document.getElementById('active-team-badge');
+                const nameEl = document.getElementById('active-team-name');
+                badge.classList.remove('hidden');
+                nameEl.textContent = gameState.teams[gameState.currentTeamIndex].name;
+            }
+        }
+
+        function getCurrentScore() {
+            if (gameState.mode === 'single') return gameState.scores.single;
+            return gameState.teams[gameState.currentTeamIndex].score;
+        }
+
+        function addScore(points) {
+            if (gameState.mode === 'single') {
+                gameState.scores.single += points;
+                document.getElementById('global-score-display').textContent = gameState.scores.single;
+            } else {
+                gameState.teams[gameState.currentTeamIndex].score += points;
+                document.getElementById('global-score-display').textContent = gameState.teams[gameState.currentTeamIndex].score;
+                renderTeamsScoreboardBar();
+            }
+        }
+
+        function renderTeamsScoreboardBar() {
+            const bar = document.getElementById('teams-scoreboard-bar');
+            if (gameState.mode !== 'teams') {
+                bar.classList.add('hidden');
+                return;
+            }
+            bar.classList.remove('hidden');
+            bar.innerHTML = '';
+
+            gameState.teams.forEach((t, idx) => {
+                const isActive = idx === gameState.currentTeamIndex;
+                bar.innerHTML += `
+                    <button onclick="switchActiveTeam(${idx})" class="p-1.5 rounded-lg border text-[11px] font-bold text-center transition ${isActive ? 'bg-cyberPurple border-cyberPink text-white shadow-lg' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white'}">
+                        <div class="truncate">${t.name}</div>
+                        <div class="text-cyberGold font-black">${t.score} ن</div>
+                    </button>
+                `;
+            });
+        }
+
+        function switchActiveTeam(idx) {
+            gameState.currentTeamIndex = idx;
+            updateTeamBadgeDisplay();
+            document.getElementById('global-score-display').textContent = gameState.teams[gameState.currentTeamIndex].score;
+            renderTeamsScoreboardBar();
+        }
+
+        function renderMapStages() {
+            const grid = document.getElementById('stages-grid');
+            grid.innerHTML = '';
+
+            let completedCount = 0;
+
+            STAGES_DATA.forEach((stage) => {
+                const isCompleted = gameState.stageProgress[stage.id];
+                if (isCompleted) completedCount++;
+
+                const cardHTML = `
+                    <div onclick="enterStage(${stage.id})" class="cyber-btn bg-slate-900/90 border-2 ${isCompleted ? 'border-cyberGold' : 'border-cyberTurquoise/40'} p-5 rounded-2xl shadow-xl flex flex-col justify-between cursor-pointer relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="w-12 h-12 flex items-center justify-center bg-slate-800 rounded-xl border border-slate-700 group-hover:scale-110 transition text-cyberTurquoise text-2xl">
+                                <i class="fas ${stage.icon}"></i>
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-black ${isCompleted ? 'bg-cyberGold text-cyberDark' : 'bg-slate-800 text-cyberTurquoise border border-cyberTurquoise/30'}">
+                                ${isCompleted ? '✓ مكتملة' : `المرحلة ${stage.id}`}
+                            </span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-black text-white mb-1 group-hover:text-cyberTurquoise transition">${stage.title}</h3>
+                            <p class="text-xs text-slate-400 font-semibold mb-3">${stage.pieceName}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+                            <span class="text-xs font-extrabold text-cyberGold">3 تحديات تفاعلية</span>
+                            <span class="text-xs text-cyberBlue font-black flex items-center gap-1">
+                                دخول البوابة <i class="fas fa-arrow-left"></i>
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+
+            document.getElementById('completed-stages-count').textContent = `${completedCount} / 7 أكملت`;
+            updateShieldPiecesUI();
+            renderTeamsScoreboardBar();
+        }
+
+        function updateShieldPiecesUI() {
+            for (let i = 1; i <= 7; i++) {
+                const el = document.querySelector(`[data-piece="${i}"]`);
+                if (el) {
+                    if (gameState.stageProgress[i]) {
+                        el.className = 'w-5 h-5 rounded-md bg-cyberGold text-cyberDark font-black flex items-center justify-center text-[10px] shadow-md border border-white animate-pulse';
+                        el.textContent = '✓';
+                    } else {
+                        el.className = 'w-5 h-5 rounded-md bg-slate-800 border border-slate-600 flex items-center justify-center text-[10px] text-slate-500 font-bold';
+                        el.textContent = i;
+                    }
+                }
+            }
+        }
+
+        function enterStage(stageId) {
+            gameState.activeStageId = stageId;
+            gameState.activeChallengeIndex = 0;
+            switchScreen('screen-arena');
+
+            if (!renderer) {
+                initThreeJS();
+            }
+
+            loadCurrentChallenge();
+        }
+
+        function loadCurrentChallenge() {
+            const stage = STAGES_DATA.find(s => s.id === gameState.activeStageId);
+            const challenge = stage.challenges[gameState.activeChallengeIndex];
+
+            document.getElementById('arena-stage-number').textContent = `المرحلة ${stage.id} من 7`;
+            document.getElementById('arena-stage-title').innerHTML = `<i class="fas ${stage.icon} ml-2 text-cyberTurquoise"></i> ${stage.title}`;
+            document.getElementById('challenge-step-counter').textContent = `${gameState.activeChallengeIndex + 1} / ${stage.challenges.length}`;
+
+            document.getElementById('challenge-question').textContent = challenge.question;
+
+            // Reset feedback box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.className = 'hidden p-4 rounded-xl border text-sm font-bold flex items-center gap-3';
+            document.getElementById('btn-next-challenge').classList.add('hidden');
+
+            // Render interactive options
+            const area = document.getElementById('challenge-interactive-area');
+            area.innerHTML = '';
+
+            challenge.options.forEach((opt, idx) => {
+                area.innerHTML += `
+                    <button onclick="checkAnswer(${idx})" class="cyber-btn w-full mb-2.5 p-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyberTurquoise text-right text-xs sm:text-sm font-bold text-slate-200 flex items-center justify-between transition">
+                        <span>${opt.text}</span>
+                        <i class="fas fa-chevron-left text-cyberTurquoise text-sm opacity-60"></i>
+                    </button>
+                `;
+            });
+
+            // Trigger 3D Salem Jump & New Orbs
+            triggerJump();
+            createGlowingOrbs();
+        }
+
+        function checkAnswer(optionIdx) {
+            const stage = STAGES_DATA.find(s => s.id === gameState.activeStageId);
+            const challenge = stage.challenges[gameState.activeChallengeIndex];
+            const selected = challenge.options[optionIdx];
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            const btnNext = document.getElementById('btn-next-challenge');
+
+            feedbackBox.classList.remove('hidden');
+
+            if (selected.correct) {
+                playSound('success');
+                addScore(10);
+                triggerJump();
+
+                feedbackBox.className = 'p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/80 text-emerald-200 text-sm font-bold flex items-center gap-3 animate-fade-in';
+                feedbackIcon.innerHTML = '<i class="fas fa-circle-check text-2xl text-emerald-400"></i>';
+                feedbackText.textContent = `إجابة رائعة وصحيحة! ${selected.explain}`;
+                btnNext.classList.remove('hidden');
+
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+            } else {
+                playSound('error');
+                feedbackBox.className = 'p-4 rounded-xl border border-rose-500/50 bg-rose-950/80 text-rose-200 text-sm font-bold flex items-center gap-3 animate-fade-in';
+                feedbackIcon.innerHTML = '<i class="fas fa-lightbulb text-2xl text-rose-400"></i>';
+                feedbackText.textContent = `تنبيه توجيهي من سالم: ${selected.explain} حارلي مرة أخرى!`;
+                btnNext.classList.add('hidden');
+            }
+        }
+
+        function nextChallenge() {
+            const stage = STAGES_DATA.find(s => s.id === gameState.activeStageId);
+            gameState.activeChallengeIndex++;
+
+            if (gameState.activeChallengeIndex < stage.challenges.length) {
+                loadCurrentChallenge();
+            } else {
+                // Complete Stage
+                gameState.stageProgress[gameState.activeStageId] = true;
+                playSound('win');
+                confetti({ particleCount: 80, spread: 100, origin: { y: 0.6 } });
+
+                // Check if all 7 stages completed
+                const allDone = Object.values(gameState.stageProgress).every(v => v === true);
+
+                if (allDone) {
+                    setTimeout(showVictoryScreen, 800);
+                } else {
+                    returnToMap();
+                }
+            }
+        }
+
+        function returnToMap() {
+            switchScreen('screen-map');
+            renderMapStages();
+        }
+
+        function showVictoryScreen() {
+            switchScreen('screen-victory');
+            playSound('win');
+
+            const summary = document.getElementById('final-summary-box');
+            const certPlayerName = document.getElementById('cert-player-name');
+            const certScore = document.getElementById('cert-score');
+
+            let winnerText = '';
+            let totalPoints = 0;
+
+            if (gameState.mode === 'single') {
+                totalPoints = gameState.scores.single;
+                winnerText = 'البطلة حارسة الأمن السيبراني';
+                summary.innerHTML = `
+                    <div class="text-cyberGold font-black text-2xl mb-1">${totalPoints} / 70 نقطة</div>
+                    <div class="text-xs text-slate-300 font-bold">أكملتِ جميع بوابات الدرع السيبراني السبع بنجاح باهر!</div>
+                `;
+            } else {
+                // Determine winning team
+                const sorted = [...gameState.teams].sort((a,b) => b.score - a.score);
+                const winner = sorted[0];
+                totalPoints = winner.score;
+                winnerText = winner.name;
+
+                summary.innerHTML = `
+                    <div class="text-cyberGold font-black text-xl mb-3">
+                        <i class="fas fa-crown text-cyberGold ml-1"></i>المركز الأول: ${winner.name} (${winner.score} نقطة)
+                    </div>
+                    <div class="space-y-1.5 text-xs text-slate-300 text-right border-t border-slate-700 pt-3">
+                        ${sorted.map((t, i) => `
+                            <div class="flex justify-between font-bold">
+                                <span>#${i+1} ${t.name}</span>
+                                <span class="text-cyberGold">${t.score} نقطة</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            certPlayerName.textContent = winnerText;
+            certScore.textContent = totalPoints;
+            document.getElementById('cert-date').textContent = new Date().toLocaleDateString('ar-SA');
+        }
+
+        function printCertificate() {
+            const certWrapper = document.getElementById('certificate-wrapper');
+            certWrapper.classList.remove('hidden');
+
+            window.print();
+
+            setTimeout(() => {
+                certWrapper.classList.add('hidden');
+            }, 1000);
+        }
+
+        function resetGame() {
+            gameState.stageProgress = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false };
+            gameState.scores = { single: 0 };
+            if (gameState.teams.length > 0) {
+                gameState.teams.forEach(t => t.score = 0);
+            }
+            document.getElementById('global-score-display').textContent = '0';
+            switchScreen('screen-intro');
+        }
+
+        function showInstructionsModal() {
+            document.getElementById('modal-instructions').classList.remove('hidden');
+        }
+
+        function hideInstructionsModal() {
+            document.getElementById('modal-instructions').classList.add('hidden');
+        }
+
+        // Initialize App on window load
+        window.onload = function() {
+            console.log('Salem Cyber Shield Game Ready!');
+        };
+    </script>
+</body>
+</html>
